@@ -821,6 +821,25 @@ async function loadModel() {
   }
 }
 
+ // Tambahkan variabel loading container di bagian atas script
+const loadingContainer = document.getElementById('loading-container');
+
+// Tambahkan fungsi helper
+function showLoading() {
+    uploadArea.style.display = 'none';
+    loadingContainer.style.display = 'flex';
+    resultContainer.style.display = 'none';
+}
+
+function hideLoading() {
+    uploadArea.style.display = 'block';
+    loadingContainer.style.display = 'none';
+}
+
+function showResults() {
+    hideLoading();
+    resultContainer.style.display = 'block';
+}
 async function predict(file) {
   if (!model) {
     alert("Model belum siap. Harap tunggu...");
