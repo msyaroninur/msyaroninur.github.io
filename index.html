@@ -476,6 +476,82 @@
                 grid-template-columns: 1fr;
             }
         }
+
+         /* Loading */
+        /* Loading Animation Styles */
+        .loading-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e6e9ff;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        
+        .loading-subtext {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .processing-dots {
+            display: inline-block;
+        }
+        
+        .processing-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .progress-animation {
+            width: 100%;
+            height: 6px;
+            background-color: #e6e9ff;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+            animation: progressFill 3s ease-in-out;
+        }
+        
+        @keyframes progressFill {
+            0% { width: 0%; }
+            30% { width: 30%; }
+            60% { width: 70%; }
+            100% { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -517,6 +593,15 @@
                         <span style="font-size: 48px;">📸</span>
                     <h3 style="color:#5e72e4;">Unggah Foto Kucing</h3>
                       Klik di sini untuk unggah gambar
+                    </div>
+                     <!-- Loading Container -->
+                    <div id="loading-container" class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Menganalisis foto kucing<span class="processing-dots"></span></div>
+                        <div class="loading-subtext">AI sedang memproses gambar Anda</div>
+                        <div class="progress-animation">
+                            <div class="progress-fill"></div>
+                        </div>
                     </div>
                     <input type="file" id="fileInput" accept="image/*" style="display: none;" />
                   </div>
@@ -743,13 +828,18 @@ async function predict(file) {
   }
 
   const startTime = performance.now();
+  
+  // Tampilkan loading
+  showLoading();
 
   const image = document.createElement("img");
   image.src = URL.createObjectURL(file);
 
   image.onload = async () => {
+    // Simulasi delay minimal untuk loading animation
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     uploadedImage.src = image.src;
-    resultContainer.style.display = 'block';
 
     const prediction = await model.predict(image);
 
@@ -758,7 +848,7 @@ async function predict(file) {
     const topThree = prediction.slice(0, 3);
 
     // Tampilkan hasil prediksi (hanya 3 teratas)
-    predictionList.innerHTML = ""; // kosongkan sebelumnya
+    predictionList.innerHTML = "";
     topThree.forEach((p) => {
       const percent = (p.probability * 100).toFixed(2);
       const item = `
@@ -767,7 +857,7 @@ async function predict(file) {
           <span>${percent}%</span>
         </div>
         <div class="progress-bar" style="height: 8px; background: #eee; border-radius: 5px; margin-bottom: 8px;">
-          <div class="progress" style="height: 100%; width: ${percent}%; background: #5e72e4; border-radius: 5px;"></div>
+          <div class="progress" style="height: 100%; width: ${percent}%; background: #5e72e4; border-radius: 5px; transition: width 0.5s ease;"></div>
         </div>
       `;
       predictionList.innerHTML += item;
@@ -777,6 +867,19 @@ async function predict(file) {
     const best = topThree[0];
     const desc = descriptions[best.className] || "Deskripsi belum tersedia.";
     descriptionText.innerHTML = `<strong>${best.className}:</strong> ${desc}`;
+
+    // Hitung waktu pemrosesan
+    const endTime = performance.now();
+    const processingTime = ((endTime - startTime) / 1000).toFixed(2);
+    processingTimeEl.innerHTML = `⏱️ Waktu pemrosesan: ${processingTime} detik`;
+
+    // Tampilkan hasil
+    showResults();
+  };
+
+  image.onerror = () => {
+    hideLoading();
+    alert("Gagal memuat gambar. Pastikan file yang dipilih adalah gambar yang valid.");
   };
 }
 
