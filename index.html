@@ -598,12 +598,12 @@
             <div class="upload-container">
                 <h2 class="section-title">Deteksi Ras Kucing</h2>
                 <div class="upload-section">
-                    <div id="upload-area" style="cursor: pointer; border: 2px dashed #ccc; padding: 20px; text-align: center;">
+                    <div id="upload-area" style="cursor: pointer; border: 2px dashed #5e72e4; padding: 20px; text-align: center;">
                         <span style="font-size: 48px;">📸</span>
                     <h3 style="color:#5e72e4;">Unggah Foto Kucing</h3>
                       Klik di sini untuk unggah gambar
                     </div>
-                     <!-- Loading Container -->
+                    <!-- Loading Container -->
                     <div id="loading-container" class="loading-container">
                         <div class="loading-spinner"></div>
                         <div class="loading-text">Menganalisis foto kucing<span class="processing-dots"></span></div>
@@ -612,7 +612,7 @@
                             <div class="progress-fill"></div>
                         </div>
                     </div>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+                    <input type="file" id="fileInput" accept=".jpeg,.jpg,.png" style="display: none;" />
                   </div>
             
               <!-- RESULT CONTAINER -->
@@ -622,7 +622,7 @@
                     <img id="uploadedImage" src="" alt="Foto kucing yang diunggah" class="uploaded-img" style="max-width: 300px; border-radius: 10px;" />
                   </div>
                   <div class="result-info">
-                    <h3>Hasil Deteksi</h3>
+                    <h3>Hasil Prediksi</h3>
                     <div id="prediction-list"></div>
                     <p id="description" style="margin-top: 20px;"></p>
                     <p id="processing-time" style="margin-top: 10px; font-size: 14px; color: #888;"></p>
@@ -736,7 +736,7 @@
                     <div class="step-icon">1</div>
                     <span style="font-size: 30px;">📸</span>
                     <h3>Unggah Foto</h3>
-                    <p>Unggah foto kucingmu</p>
+                    <p>Ungguh foto kucingmu</p>
                 </div>
                 <div class="step">
                     <div class="step-icon">2</div>
@@ -787,12 +787,7 @@
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
         });
-    const navItems = document.querySelectorAll('.nav-links a');
-    navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-    });
-});
+        
 const uploadArea = document.getElementById('upload-area');
 const fileInput = document.getElementById('fileInput');
 const resultContainer = document.querySelector('.result-container');
@@ -805,18 +800,18 @@ let model;
 
 // Daftar deskripsi sesuai className dari Teachable Machine
 const descriptions = {
-  "Persian": "Kucing dengan wajah bulat, hidung pesek, dan bulu panjang. Dikenal tenang dan penyayang.",
-  "Siamese": "Kucing dengan tubuh ramping, warna kontras, dan vokal yang aktif.",
-  "Maine_Coon": "Salah satu ras terbesar, berbulu tebal dan ramah dengan manusia.",
-  "Bengal": "Bulu mirip macan tutul, aktif dan suka bermain.",
-  "Sphynx": "Tidak berbulu, kulit keriput, dan sangat suka kehangatan.",
-  "British_Shorthair": "Tubuh kekar dan wajah bulat dengan sifat tenang.",
-  "Ragdoll": "Berbulu panjang, mata biru, dan sangat jinak.",
-  "Abyssinian": "Tubuh atletis dan sangat aktif bermain.",
-  "Birman": "Mirip Ragdoll, bulu lembut dan sangat bersahabat.",
-  "Russian_Blue": "Bulu abu-abu kebiruan, mata hijau, dan cenderung pemalu.",
-  "Bombay": "Berwarna hitam pekat dengan mata kuning keemasan. Kucing ini sangat sosial, penyayang, dan suka berada di dekat manusia. Sering disebut “mini panther”.",
-  "Egyptian_Mau": "Kucing langka dengan corak tutul alami dan kecepatan lari tinggi. Dikenal sangat loyal, ekspresif, dan memiliki mata hijau cerah seperti buah anggur."
+  "Persian": "Bulu panjang, wajah pesek, dan sifat tenang. Cocok untuk dipelihara di dalam rumah.",
+  "Siamese": "Ramping, bulu kontras, dan sangat vokal. Suka berinteraksi dan aktif.",
+  "Maine_Coon": "Ukuran besar, bulu tebal, dan ramah. Mudah bergaul dengan manusia dan hewan lain.",
+  "Bengal": "Motif seperti macan tutul. Enerjik, suka bermain, dan penuh rasa ingin tahu.",
+  "Sphynx": "Tidak berbulu, hangat, dan sangat manja. Suka kehangatan dan perhatian.",
+  "British_Shorthair": "Badan kekar, wajah bulat, dan sifat kalem. Tidak rewel dan cocok di rumah tenang.",
+  "Ragdoll": "Bulu lembut, mata biru, dan sangat jinak. Sering diam saat digendong.",
+  "Abyssinian": "Atletis dan aktif. Cerdas dan sangat suka bermain.",
+  "Birman": "Bulu halus, wajah manis, dan ramah. Cocok untuk keluarga.",
+  "Russian_Blue": "Bulu abu kebiruan, mata hijau, dan pemalu. Setia dan pendiam.",
+  "Bombay": "Hitam legam dengan mata kuning. Sosial dan penuh kasih, dijuluki 'mini panther'.",
+  "Egyptian_Mau": "Corak tutul alami, cepat, dan ekspresif. Mata hijau terang, sangat setia."
 };
 
 async function loadModel() {
@@ -830,7 +825,7 @@ async function loadModel() {
   }
 }
 
- // Tambahkan variabel loading container di bagian atas script
+// Tambahkan variabel loading container di bagian atas script
 const loadingContainer = document.getElementById('loading-container');
 
 // Tambahkan fungsi helper
@@ -849,6 +844,7 @@ function showResults() {
     hideLoading();
     resultContainer.style.display = 'block';
 }
+
 async function predict(file) {
   if (!model) {
     alert("Model belum siap. Harap tunggu...");
